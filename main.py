@@ -133,11 +133,134 @@ For example, when an array is passed like [19, 5, 42, 2, 77], the output should 
 def sum_two_smallest_numbers(numbers):
     numbers.sort()
     return numbers[0] + numbers[1]
+""""
+Write a function that takes a string of braces, and determines if the order of the braces is valid. It should return true if the string is valid, and false if it's invalid.
+
+This Kata is similar to the Valid Parentheses Kata, but introduces new characters: brackets [], and curly braces {}. Thanks to @arnedag for the idea!
+
+All input strings will be nonempty, and will only consist of parentheses, brackets and curly braces: ()[]{}.
+
+What is considered Valid?
+A string of braces is considered valid if all braces are matched with the correct brace.
+
+Examples
+"(){}[]"   =>  True
+"([{}])"   =>  True
+"(}"       =>  False
+"[(])"     =>  False
+"[({})](]" =>  False
+
 
 """
-It’s guaranteed that array contains at least 3 numbers.
+def validBraces(string):
+    open_list = ["[", "{", "("]
+    close_list = ["]", "}", ")"]
+    stack = []
+    for i in string:
+        if i in open_list:
+            stack.append(i)
+        elif i in close_list:
+            pos = close_list.index(i)
+            if ((len(stack) > 0) and
+                (open_list[pos] == stack[len(stack)-1])):
+                stack.pop()
+            else:
+                return False
+    if len(stack) == 0:
+        return True
+    else:
+        return False
 
-The tests contain some very huge arrays, so think about performance.
+
 """
+Sudoku Background
+Sudoku is a game played on a 9x9 grid. The goal of the game is to fill all cells of the grid with digits from 1 to 9, 
+so that each column, each row, and each of the nine 3x3 sub-grids (also known as blocks) contain all of the digits from 1 to 9.
+(More info at: http://en.wikipedia.org/wiki/Sudoku)
+
+Sudoku Solution Validator
+Write a function validSolution/ValidateSolution/valid_solution() that accepts a 2D array representing a Sudoku board, 
+and returns true if it is a valid solution, or false otherwise. 
+The cells of the sudoku board may also contain 0's, which will represent empty cells. 
+Boards containing one or more zeroes are considered to be invalid solutions.
+
+The board is always 9 cells by 9 cells, and every cell only contains integers from 0 to 9.
+
+Examples
+validSolution([
+  [5, 3, 4, 6, 7, 8, 9, 1, 2],
+  [6, 7, 2, 1, 9, 5, 3, 4, 8],
+  [1, 9, 8, 3, 4, 2, 5, 6, 7],
+  [8, 5, 9, 7, 6, 1, 4, 2, 3],
+  [4, 2, 6, 8, 5, 3, 7, 9, 1],
+  [7, 1, 3, 9, 2, 4, 8, 5, 6],
+  [9, 6, 1, 5, 3, 7, 2, 8, 4],
+  [2, 8, 7, 4, 1, 9, 6, 3, 5],
+  [3, 4, 5, 2, 8, 6, 1, 7, 9]
+]); // => true
+validSolution([
+  [5, 3, 4, 6, 7, 8, 9, 1, 2], 
+  [6, 7, 2, 1, 9, 0, 3, 4, 8],
+  [1, 0, 0, 3, 4, 2, 5, 6, 0],
+  [8, 5, 9, 7, 6, 1, 0, 2, 0],
+  [4, 2, 6, 8, 5, 3, 7, 9, 1],
+  [7, 1, 3, 9, 2, 4, 8, 5, 6],
+  [9, 0, 1, 5, 3, 7, 2, 1, 4],
+  [2, 8, 7, 4, 1, 9, 6, 3, 5],
+  [3, 0, 0, 4, 8, 1, 1, 7, 9]
+]); // => false
+"""
+def valid_solution(board):
+
+    # rows by rows checking
+    hset = set()
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] in hset:
+                return False
+            else:
+                hset.add(board[i][j])
+        hset = set()
+
+    # cols by cols checking
+    hset = set()
+    for i in range(9):
+        for j in range(9):
+            if board[j][i] in hset:
+                return False
+            else:
+                hset.add(board[j][i])
+        hset = set()
+
+    # 3 by 3 check
+    subs = [range(0, 3), range(3, 6), range(6, 9)]
+    subgrids = []
+    for x in subs:
+        for y in subs:
+            subgrids.append([x, y])
+    for (row_range, column_range) in subgrids:
+        hset = set()
+        for i in row_range:
+            for j in column_range:
+                if board[i][j] in hset:
+                    return False
+                else:
+                    hset.add(board[i][j])
+
+    return True
 
 
+
+
+
+
+tomb =  [[5, 3, 4, 6, 7, 8, 9, 1, 2],
+        [6, 7, 2, 1, 9, 0, 3, 4, 9],
+        [1, 0, 0, 3, 4, 2, 5, 6, 0],
+        [8, 5, 9, 7, 6, 1, 0, 2, 0],
+        [4, 2, 6, 8, 5, 3, 7, 9, 1],
+        [7, 1, 3, 9, 2, 4, 8, 5, 6],
+        [9, 0, 1, 5, 3, 7, 2, 1, 4],
+        [2, 8, 7, 4, 1, 9, 6, 3, 5],
+        [3, 0, 0, 4, 8, 1, 1, 7, 9]]
+print(valid_solution(tomb))
